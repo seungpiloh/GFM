@@ -207,3 +207,101 @@ new paragraph~~.
 #### 4.2 예제
 ##### 4.2.1
 www.commonmark.org
+##### 4.2.2
+Visit www.commonmark.org/help for more information.
+
+- 유효한 도메인 이후에는 비 공간이거나 문자가 아닌 것들도 올 수 있습니다.
+
+##### 4.2.3
+Visit www.commonmark.org.
+
+Visit www.commonmark.org/a.b.
+
+- 그런 다음 다음과 같이 확장된 자동링크 경로 검증을 적용합니다. 후행 구두점 (특히 ? , ! , . , , , : , * , _ , and , ~)은 링크 내부에 포함될 수 있지만 자동 링크의 일부로 간주되지 않습니다.   
+
+##### 4.2.4
+www.google.com/search?q=Markup+(business)
+
+www.google.com/search?q=Markup+(business)))
+
+(www.google.com/search?q=Markup+(business))
+
+(www.google.com/search?q=Markup+(business)
+
+- 자동 링크가 )로 종료되면 전체 자동 링크에서 괄호의 총 개수를 검색합니다. 여는 괄호보다 닫히는 괄호의 수가 더 많은 경우 괄호 안에 자동 링크를 포함하기 위해 자동 링크의 일치하지 않는 후행 괄호 부분은 고려하지 않습니다.
+
+##### 4.2.5
+www.google.com/search?q=(business))+ok
+
+- 이 검사는 링크가 닫히는 괄호로 끝날 때만 수행되므로, 자동 링크 내부에 괄호만 있는 경우 특별한 규칙이 적용되지 않습니다.
+
+##### 4.2.6
+www.google.com/search?q=commonmark&hl=en
+
+www.google.com/search?q=commonmark&hl;
+
+- 자동 링크가 세미콜론(;)으로 끝나는 경우 엔티티 참조와 유사한지, 이전 텍스트가 하나 이상의 알파벳-숫자 뒤에 오는 경우 인지 확입합니다. 만약 그렇다면 자동 링크에서 제외됩니다.
+
+##### 4.2.7
+www.commonmark.org/he<lp
+
+- <는 자동 링크를 즉시 종료합니다.
+
+##### 4.2.8
+http://commonmark.org
+
+(Visit https://encrypted.google.com/search?q=Markup+(business))
+
+- 확장된 URL 자동 링크는 확장된 자동 링크 경로 검증에 따라 스키마 중 하나가 http:// 또는 https:// 이고 뒤이어 유효한 도메인이 올 때 0개 이상의 비 공간이거나 문자가 아닌 것이 있으면 인식됩니다.
+
+##### 4.2.9
+foo@bar.baz
+
+- 확장된 이메일 자동 링크는 텍스트 노드 내에서 이메일 주소가 인식될 때 인식됩니다. 이메일 주소는 다음 규칙에 따라 인식됩니다. 
+    1. 알파벳-숫자 또는 . , - , _ , + 인 하나 이상의 문자입니다.
+    2. @기호입니다.
+    3. 알파벳-숫자 또는  - , _ , 인 마침표로 구분된 하나 이상의 문자입니다. 적어도 하나의 마침표가  있어야 합니다. 마지막 문자는 - 또는 _ 중 하나일 수 없습니다.
+
+- 스키마 mailto가 생성된 링크에 자동으로 추가됩니다.
+
+##### 4.2.10
+hello@mail+xyz.example isn't valid, but hello+xyz@mail.example is.
+
+- +는 @ 앞에 있을 수 있지만, 그 후에 있을 수는 없습니다.
+
+##### 4.2.11
+a.b-c_d@a.b
+
+a.b-c_d@a.b.
+
+a.b-c_d@a.b-
+
+a.b-c_d@a.b_
+
+- . , - 및 _는 @의 양쪽에 있을 수 있지만 . 만 이메일 주소 끝에 발생할 수 있습니다. 이 경우 이메일 주소는 주소의 일부로 간주되지 않습니다.
+
+### 5. 허용되지 않는 원시 HTML (Disallowed Raw HTML)
+#### 5.1 특징
+- GFM은 HTML출력을 렌더링 할 때 다음 HTML 태그들이 필터링되는 태그필터를 활성화합니다.
+
+    - <title>
+    - <textarea>
+    - <style>
+    - <xmp>
+    - <iframe>
+    - <noembed>
+    - <noframes>
+    - <script>
+    - <plaintext>
+
+- 필터링은 선행 < 를 %lt; 개체로 대체하여 수행합니다. 이러한 태그들은 특히 HTML이 그들 고유의 방식으로 해석되는 방법을 변경할 때 선택되며 (즉. 중첩된 HTML은 다르게 해석됩니다.) , 이것은 일반적으로 다른 렌더링된 Markdown content의 맥락에서 바람직 하지 않습니다.
+
+#### 5.2 예제
+##### 5.2.1
+<strong> <title> <style> <em>
+
+<blockquote>
+  <xmp> is disallowed.  <XMP> is also disallowed.
+</blockquote>
+   
+- 다른 모든 HTML 태그들은 그대로 유지됩니다.
